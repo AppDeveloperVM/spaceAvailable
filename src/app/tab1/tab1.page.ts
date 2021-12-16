@@ -46,11 +46,11 @@ export class Tab1Page implements OnInit{
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       //LOAD THE MAP WITH THE PREVIOUS VALUES AS PARAMETERS.
-      this.getAddressFromCoords(resp.coords.latitude, resp.coords.longitude);
+      this.GetAddressFromCoords(resp.coords.latitude, resp.coords.longitude);
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
       this.map.addListener('tilesloaded', () => {
         console.log('accuracy',this.map, this.map.center.lat());
-        this.getAddressFromCoords(this.map.center.lat(), this.map.center.lng());
+        this.GetAddressFromCoords(this.map.center.lat(), this.map.center.lng());
         this.lat = this.map.center.lat();
         this.long = this.map.center.lng();
       });
@@ -59,7 +59,8 @@ export class Tab1Page implements OnInit{
     });
   }
 
-  getAddressFromCoords(lattitude, longitude) {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  GetAddressFromCoords(lattitude, longitude) {
     console.log('getAddressFromCoords '+lattitude+' '+longitude);
    const options: NativeGeocoderOptions = {
       useLocale: true,
@@ -85,12 +86,14 @@ export class Tab1Page implements OnInit{
   }
 
   //FUNCTION SHOWING THE COORDINATES OF THE POINT AT THE CENTER OF THE MAP
-  showCords(){
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ShowCords(){
     alert('lat' +this.lat+', long'+this.long );
   }
 
   //AUTOCOMPLETE, SIMPLY LOAD THE PLACE USING GOOGLE PREDICTIONS AND RETURNING THE ARRAY.
-  updateSearchResults(){
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  UpdateSearchResults(){
     if (this.autocomplete.input === '') {
       this.autocompleteItems = [];
       return;
@@ -107,20 +110,23 @@ export class Tab1Page implements OnInit{
   }
 
   //wE CALL THIS FROM EACH ITEM.
-  selectSearchResult(item) {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  SelectSearchResult(item) {
     ///WE CAN CONFIGURE MORE COMPLEX FUNCTIONS SUCH AS UPLOAD DATA TO FIRESTORE OR LINK IT TO SOMETHING
     alert(JSON.stringify(item));
     this.placeid = item.place_id;
   }
 
   //lET'S BE CLEAN! THIS WILL JUST CLEAN THE LIST WHEN WE CLOSE THE SEARCH BAR.
-  clearAutocomplete(){
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  ClearAutocomplete(){
     this.autocompleteItems = [];
     this.autocomplete.input = '';
   }
 
   //sIMPLE EXAMPLE TO OPEN AN URL WITH THE PLACEID AS PARAMETER.
-  goTo(){
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  GoTo(){
     return window.location.href = 'https://www.google.com/maps/search/?api=1&query=Google&query_place_id='+this.placeid;
   }
 
