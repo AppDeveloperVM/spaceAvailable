@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Geolocation, GeolocationOptions ,Geoposition ,PositionError } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 
 declare const google;
@@ -22,6 +22,9 @@ export class Tab1Page implements OnInit{
   placeid: any;
   googleAutocomplete: any;
 
+  options: PositionOptions;
+  currentPos: Geoposition;
+
   constructor(
     private geolocation: Geolocation,
     private nativeGeocoder: NativeGeocoder,
@@ -41,6 +44,7 @@ export class Tab1Page implements OnInit{
     this.geolocation.getCurrentPosition().then((resp) => {
       const latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
       const mapOptions = {
+        enableHighAccuracy : true,// optional
         center: latLng,
         zoom: 15,
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -54,12 +58,12 @@ export class Tab1Page implements OnInit{
         this.lat = this.map.center.lat();
         this.long = this.map.center.lng();
       });
-    }).catch((error) => {
+      this.addMarker();
+    }).catch((error) => { // error handling
       console.log('Error getting location', error);
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   getAddressFromCoords(lattitude, longitude) {
     console.log('getAddressFromCoords '+lattitude+' '+longitude);
    const options: NativeGeocoderOptions = {
@@ -83,6 +87,25 @@ export class Tab1Page implements OnInit{
       .catch((error: any) =>{
         this.address = 'Address Not Available!';
       });
+  }
+
+  addMarker(){
+
+    const marker = new google.maps.Marker({
+      map: this.map,
+      animation: google.maps.Animation.DROP,
+      position: this.map.getCenter()
+    });
+
+    const content = '<p>This is your current position !</p>';
+    const infoWindow = new google.maps.InfoWindow({
+      content
+    });
+
+    google.maps.event.addListener(marker, 'click', () => {
+      infoWindow.open(this.map, marker);
+    });
+
   }
 
   //FUNCTION SHOWING THE COORDINATES OF THE POINT AT THE CENTER OF THE MAP
@@ -121,8 +144,7 @@ export class Tab1Page implements OnInit{
   }
 
   //sIMPLE EXAMPLE TO OPEN AN URL WITH THE PLACEID AS PARAMETER.
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  GoTo(){
+  goTo(){
     return window.location.href = 'https://www.google.com/maps/search/?api=1&query=Google&query_place_id='+this.placeid;
   }
 
