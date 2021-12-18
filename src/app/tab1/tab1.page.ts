@@ -24,6 +24,7 @@ export class Tab1Page implements OnInit{
 
   options: PositionOptions;
   currentPos: Geoposition;
+  places: Array<any>;
 
   constructor(
     private geolocation: Geolocation,
@@ -58,7 +59,9 @@ export class Tab1Page implements OnInit{
         this.lat = this.map.center.lat();
         this.long = this.map.center.lng();
       });
-      this.addMarker();
+
+      //this.addMarker();
+
     }).catch((error) => { // error handling
       console.log('Error getting location', error);
     });
@@ -89,19 +92,46 @@ export class Tab1Page implements OnInit{
       });
   }
 
-  addMarker(){
+  getRestaurants(latLng)
+  {
+    const service = new google.maps.places.PlacesService(this.map);
+    const request = {
+        location : latLng,
+        radius : 8047 ,
+        types: ['restaurant']
+    };
+    return new Promise((resolve,reject)=>{
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+        service.nearbySearch(request,function(results,status){
+            if(status === google.maps.places.PlacesServiceStatus.OK)
+            {
+                resolve(results);
+            }else
+            {
+                reject(status);
+            }
+
+        });
+    });
+
+  }
+
+  addMarker(place){
+
+    const latLng = new google.maps.LatLng(this.lat, this.long);
 
     const marker = new google.maps.Marker({
       map: this.map,
       animation: google.maps.Animation.DROP,
-      position: this.map.getCenter()
+      position: place.geometry.location
     });
 
-    const content = '<p>This is your current position !</p>';
+    const content = '<p>position !</p>';
     const infoWindow = new google.maps.InfoWindow({
       content
     });
 
+    //infoContent for every marker
     google.maps.event.addListener(marker, 'click', () => {
       infoWindow.open(this.map, marker);
     });
@@ -111,6 +141,20 @@ export class Tab1Page implements OnInit{
   //FUNCTION SHOWING THE COORDINATES OF THE POINT AT THE CENTER OF THE MAP
   showCords(){
     alert('lat' +this.lat+', long'+this.long );
+  }
+
+  updatePlacesList(){
+    const latLng = new google.maps.LatLng(this.lat, this.long);
+
+    this.getRestaurants(latLng).then((results: Array<any>)=>{
+      this.places = results;
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      for(let i = 0 ;i < results.length ; i++)
+      {
+          this.addMarker(results[i]);
+      }
+
+    },(status)=>console.log(status));
   }
 
   //AUTOCOMPLETE, SIMPLY LOAD THE PLACE USING GOOGLE PREDICTIONS AND RETURNING THE ARRAY.
