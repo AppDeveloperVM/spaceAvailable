@@ -46,11 +46,11 @@ export class Tab1Page implements OnInit{
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       //LOAD THE MAP WITH THE PREVIOUS VALUES AS PARAMETERS.
-      this.GetAddressFromCoords(resp.coords.latitude, resp.coords.longitude);
+      this.getAddressFromCoords(resp.coords.latitude, resp.coords.longitude);
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
       this.map.addListener('tilesloaded', () => {
         console.log('accuracy',this.map, this.map.center.lat());
-        this.GetAddressFromCoords(this.map.center.lat(), this.map.center.lng());
+        this.getAddressFromCoords(this.map.center.lat(), this.map.center.lng());
         this.lat = this.map.center.lat();
         this.long = this.map.center.lng();
       });
@@ -60,7 +60,7 @@ export class Tab1Page implements OnInit{
   }
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  GetAddressFromCoords(lattitude, longitude) {
+  getAddressFromCoords(lattitude, longitude) {
     console.log('getAddressFromCoords '+lattitude+' '+longitude);
    const options: NativeGeocoderOptions = {
       useLocale: true,
@@ -86,14 +86,12 @@ export class Tab1Page implements OnInit{
   }
 
   //FUNCTION SHOWING THE COORDINATES OF THE POINT AT THE CENTER OF THE MAP
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  ShowCords(){
+  showCords(){
     alert('lat' +this.lat+', long'+this.long );
   }
 
   //AUTOCOMPLETE, SIMPLY LOAD THE PLACE USING GOOGLE PREDICTIONS AND RETURNING THE ARRAY.
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  UpdateSearchResults(){
+  updateSearchResults(){
     if (this.autocomplete.input === '') {
       this.autocompleteItems = [];
       return;
@@ -110,16 +108,14 @@ export class Tab1Page implements OnInit{
   }
 
   //wE CALL THIS FROM EACH ITEM.
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  SelectSearchResult(item) {
+  selectSearchResult(item) {
     ///WE CAN CONFIGURE MORE COMPLEX FUNCTIONS SUCH AS UPLOAD DATA TO FIRESTORE OR LINK IT TO SOMETHING
     alert(JSON.stringify(item));
     this.placeid = item.place_id;
   }
 
   //lET'S BE CLEAN! THIS WILL JUST CLEAN THE LIST WHEN WE CLOSE THE SEARCH BAR.
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  ClearAutocomplete(){
+  clearAutocomplete(){
     this.autocompleteItems = [];
     this.autocomplete.input = '';
   }
