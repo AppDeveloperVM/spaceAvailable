@@ -1,5 +1,7 @@
 {
   "name": "spaceAvailable",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
