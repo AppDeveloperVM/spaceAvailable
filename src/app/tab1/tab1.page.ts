@@ -25,6 +25,10 @@ export class Tab1Page implements OnInit{
   options: PositionOptions;
   currentPos: Geoposition;
   places: Array<any>;
+  hierarchicalData: any;
+
+  city: string;
+  country: string;
 
   constructor(
     private geolocation: Geolocation,
@@ -54,7 +58,7 @@ export class Tab1Page implements OnInit{
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
       this.map.addListener('tilesloaded', () => {
 
-        console.log('accuracy',this.map, this.map.center.lat());
+        //console.log('accuracy',this.map, this.map.center.lat());
         this.getAddressFromCoords(resp.coords.latitude,  resp.coords.longitude);
         this.lat = this.map.center.lat();
         this.long = this.map.center.lng();
@@ -78,23 +82,43 @@ export class Tab1Page implements OnInit{
     this.nativeGeocoder.reverseGeocode(lattitude, longitude, options)
       .then((result: NativeGeocoderResult[]) => {
         this.address = '';
+
         const responseAddress = [];
         for (const [key, value] of Object.entries(result[0])) {
-          if(value.length>0)
+          if(value.length > 0)
           { responseAddress.push(value); }
         }
         responseAddress.reverse();
         for (const value of responseAddress) {
           this.address += value+', ';
+          //this.getCityCountry(value);
         }
         alert(this.address);
+        alert(JSON.stringify(result[0]));
+
         this.address = this.address.slice(0, -2);
+
+        //alert('Country: ' + this.country + ',City: ' + this.city);
       })
       .catch((error: any) =>{
         this.address = 'Address Not Available!';
         alert(error.message);
       });
 
+  }
+
+  getCityCountry(jsondata){
+    for(const r of jsondata.formatted_address ) {
+      for(const n of r.address_components ) {
+          if(n.types[0] === 'locality' && n.types[1] === 'political') {
+              this.city = n.long_name;
+          }
+
+          if(n.type[0] === 'country' && n.types[1] === 'political') {
+              this.country = n.long_name;
+          }
+      }
+  }
   }
 
   getRestaurants(latLng)
