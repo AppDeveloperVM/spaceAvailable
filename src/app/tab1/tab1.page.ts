@@ -73,11 +73,14 @@ export class Tab1Page implements OnInit{
   }
 
   userPosition(){
+
     this.geolocation.getCurrentPosition().then((resp) => {
+      //this.map.setCameraTarget(resp[0].position);
       alert( this.getAddressFromCoords(resp.coords.latitude,  resp.coords.longitude) );
     }).catch((error) => { // error handling
       console.log('Error getting location', error);
     });
+
   }
 
   getAddressFromCoords(lattitude, longitude) {
@@ -145,6 +148,12 @@ export class Tab1Page implements OnInit{
         service.nearbySearch(request,function(results,status){
             if(status === google.maps.places.PlacesServiceStatus.OK)
             {
+              /*
+                results.forEach((prediction) => {
+                  this.places.push(prediction);
+                });
+                */
+
                 resolve(results);
             }else
             {
@@ -166,7 +175,10 @@ export class Tab1Page implements OnInit{
       position: place.geometry.location
     });
 
-    const content = this.getAddressFromCoords(this.lat, this.long);
+    const latitude = place.geometry.location.lat();
+    const longitude = place.geometry.location.lng();
+
+    const content = this.getAddressFromCoords(latitude , longitude);
     const infoWindow = new google.maps.InfoWindow({
       content
     });
