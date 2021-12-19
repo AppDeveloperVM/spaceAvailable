@@ -9,14 +9,13 @@ import { AppComponent } from './app.component';
 
 //IMPORT THE PLUGINS
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
+import { NativeGeocoder } from '@awesome-cordova-plugins/native-geocoder/ngx';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
-    //ADD GEOLOCATION Y GEOCODER ON THE PROVIDERS.
     Geolocation,
     NativeGeocoder,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
