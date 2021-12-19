@@ -93,8 +93,8 @@ export class Tab1Page implements OnInit{
           this.address += value+', ';
           //this.getCityCountry(value);
         }
-        alert(this.address);
-        alert(JSON.stringify(result[0]));
+        //alert(this.address);
+        //alert(JSON.stringify(result[0]));
 
         this.address = this.address.slice(0, -2);
 
@@ -102,8 +102,11 @@ export class Tab1Page implements OnInit{
       })
       .catch((error: any) =>{
         this.address = 'Address Not Available!';
-        alert(error.message);
+        //alert(error.message);
       });
+
+      if(this.address!==''){return this.address;}
+
 
   }
 
@@ -155,7 +158,7 @@ export class Tab1Page implements OnInit{
       position: place.geometry.location
     });
 
-    const content = '<p>position !</p>';
+    const content = this.getAddressFromCoords(this.lat, this.long);
     const infoWindow = new google.maps.InfoWindow({
       content
     });
