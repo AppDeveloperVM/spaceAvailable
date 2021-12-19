@@ -59,7 +59,7 @@ export class Tab1Page implements OnInit{
       this.map.addListener('tilesloaded', () => {
 
         //console.log('accuracy',this.map, this.map.center.lat());
-        this.getAddressFromCoords(resp.coords.latitude,  resp.coords.longitude);
+
         this.lat = this.map.center.lat();
         this.long = this.map.center.lng();
 
@@ -67,6 +67,14 @@ export class Tab1Page implements OnInit{
 
       //this.addMarker();
 
+    }).catch((error) => { // error handling
+      console.log('Error getting location', error);
+    });
+  }
+
+  userPosition(){
+    this.geolocation.getCurrentPosition().then((resp) => {
+      alert( this.getAddressFromCoords(resp.coords.latitude,  resp.coords.longitude) );
     }).catch((error) => { // error handling
       console.log('Error getting location', error);
     });
