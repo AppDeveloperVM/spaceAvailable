@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { Geolocation, GeolocationOptions ,Geoposition ,PositionError } from '@ionic-native/geolocation/ngx';
-import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
+import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@awesome-cordova-plugins/native-geocoder/ngx';
 
 declare const google;
 
@@ -51,13 +51,14 @@ export class Tab1Page implements OnInit{
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       //LOAD THE MAP WITH THE PREVIOUS VALUES AS PARAMETERS.
-      this.getAddressFromCoords(resp.coords.latitude, resp.coords.longitude);
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
       this.map.addListener('tilesloaded', () => {
+
         console.log('accuracy',this.map, this.map.center.lat());
-        this.getAddressFromCoords(this.map.center.lat(), this.map.center.lng());
+        this.getAddressFromCoords(resp.coords.latitude,  resp.coords.longitude);
         this.lat = this.map.center.lat();
         this.long = this.map.center.lng();
+
       });
 
       //this.addMarker();
@@ -73,6 +74,7 @@ export class Tab1Page implements OnInit{
       useLocale: true,
       maxResults: 5
     };
+
     this.nativeGeocoder.reverseGeocode(lattitude, longitude, options)
       .then((result: NativeGeocoderResult[]) => {
         this.address = '';
@@ -85,11 +87,14 @@ export class Tab1Page implements OnInit{
         for (const value of responseAddress) {
           this.address += value+', ';
         }
+        alert(this.address);
         this.address = this.address.slice(0, -2);
       })
       .catch((error: any) =>{
         this.address = 'Address Not Available!';
+        alert(error.message);
       });
+
   }
 
   getRestaurants(latLng)
