@@ -22,6 +22,7 @@ export class Tab1Page implements OnInit{
   placeid: any;
   googleAutocomplete: any;
 
+  markers = [];
   infoWindows: any = [];
 
   options: PositionOptions;
@@ -59,7 +60,6 @@ export class Tab1Page implements OnInit{
       //LOAD THE MAP WITH THE PREVIOUS VALUES AS PARAMETERS.
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
       this.map.addListener('tilesloaded', () => {
-
         //console.log('accuracy',this.map, this.map.center.lat());
 
         this.lat = this.map.center.lat();
@@ -192,8 +192,25 @@ export class Tab1Page implements OnInit{
       this.closeAllInfoWindows();
       infoWindow.open(this.map, marker);
     });
-    this.infoWindows.push(infoWindow);
 
+    this.infoWindows.push(infoWindow);
+    this.markers.push(marker);
+  }
+
+  deleteMarkers() {
+    this.clearMarkers();
+    this.markers = [];
+  }
+
+  clearMarkers() {
+    this.setMapOnAll(null);
+  }
+
+  setMapOnAll(map) {
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < this.markers.length; i++) {
+      this.markers[i].setMap(map);
+    }
   }
 
   closeAllInfoWindows(){
@@ -209,6 +226,8 @@ export class Tab1Page implements OnInit{
 
   updatePlacesList(){
     const latLng = new google.maps.LatLng(this.lat, this.long);
+
+    this.deleteMarkers();
 
     this.getRestaurants(latLng).then((results: Array<any>)=>{
 
