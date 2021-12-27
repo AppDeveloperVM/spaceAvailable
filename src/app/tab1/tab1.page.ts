@@ -84,6 +84,8 @@ export class Tab1Page implements OnInit{
 
   }
 
+  //--- Get location data Functions ---
+
   getAddressFromCoords(lattitude, longitude) {
 
     console.log('getAddressFromCoords : '+ lattitude+' '+longitude);
@@ -168,6 +170,8 @@ export class Tab1Page implements OnInit{
 
   }
 
+  //--- Markers Functions ---
+
   addMarker(place){
     const marker = new google.maps.Marker({
       map: this.map,
@@ -197,6 +201,13 @@ export class Tab1Page implements OnInit{
     this.markers.push(marker);
   }
 
+  setMapOnAll(map) {
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < this.markers.length; i++) {
+      this.markers[i].setMap(map);
+    }
+  }
+
   deleteMarkers() {
     this.clearMarkers();
     this.markers = [];
@@ -206,18 +217,13 @@ export class Tab1Page implements OnInit{
     this.setMapOnAll(null);
   }
 
-  setMapOnAll(map) {
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < this.markers.length; i++) {
-      this.markers[i].setMap(map);
-    }
-  }
-
   closeAllInfoWindows(){
     for(const window of this.infoWindows){
       window.close();
     }
   }
+
+  //--- Called from page.html searchBox ---
 
   //FUNCTION SHOWING THE COORDINATES OF THE POINT AT THE CENTER OF THE MAP
   showCords(){
@@ -239,17 +245,10 @@ export class Tab1Page implements OnInit{
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for(let i = 0 ;i < results.length ; i++)
       {
-        //check if position is already marked
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        if(this.places.indexOf(results[i]) === -1){
-          this.places.push(results[i].name);
-          //this.addMarker(results[i]);
-        }else{ console.log('This item already exists'); }
         this.addMarker(results[i]);
       }
 
       //alert( JSON.stringify(this.places) );
-
     },(status)=>console.log(status));
   }
 
