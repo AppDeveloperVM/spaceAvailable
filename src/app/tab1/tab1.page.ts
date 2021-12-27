@@ -22,6 +22,8 @@ export class Tab1Page implements OnInit{
   placeid: any;
   googleAutocomplete: any;
 
+  infoWindows: any = [];
+
   options: PositionOptions;
   currentPos: Geoposition;
   places: Array<any>;
@@ -65,7 +67,6 @@ export class Tab1Page implements OnInit{
 
       });
 
-      //this.addMarker();
 
     }).catch((error) => { // error handling
       console.log('Error getting location', error);
@@ -84,10 +85,11 @@ export class Tab1Page implements OnInit{
   }
 
   getAddressFromCoords(lattitude, longitude) {
-    console.log('getAddressFromCoords '+lattitude+' '+longitude);
-   const options: NativeGeocoderOptions = {
+
+    console.log('getAddressFromCoords : '+ lattitude+' '+longitude);
+    const options: NativeGeocoderOptions = {
       useLocale: true,
-      maxResults: 5
+      maxResults: 1
     };
 
     this.nativeGeocoder.reverseGeocode(lattitude, longitude, options)
@@ -109,10 +111,11 @@ export class Tab1Page implements OnInit{
 
         this.address = this.address.slice(0, -2);
 
-        //alert('Country: ' + this.country + ',City: ' + this.city);
+        console.log('address: ' + this.address);
       })
       .catch((error: any) =>{
         this.address = 'Address Not Available!';
+        console.log('Address Not Available');
         //alert(error.message);
       });
 
@@ -166,9 +169,6 @@ export class Tab1Page implements OnInit{
   }
 
   addMarker(place){
-
-    const latLng = new google.maps.LatLng(this.lat, this.long);
-
     const marker = new google.maps.Marker({
       map: this.map,
       animation: google.maps.Animation.DROP,
@@ -178,16 +178,28 @@ export class Tab1Page implements OnInit{
     const latitude = place.geometry.location.lat();
     const longitude = place.geometry.location.lng();
 
-    const content = this.getAddressFromCoords(latitude , longitude);
+    const address = this.getAddressFromCoords(latitude , longitude);
+    const infoWindowContent = '<div id="content>' +
+                                '<h2 id="heading">'+ address +
+                                '<p>Latitude: '+ place.latitude + '</p>' +
+                                '<p>Longitude: ' + place.longitude + '</p>';
     const infoWindow = new google.maps.InfoWindow({
-      content
+      infoWindowContent
     });
 
     //infoContent for every marker
     google.maps.event.addListener(marker, 'click', () => {
+      this.closeAllInfoWindows();
       infoWindow.open(this.map, marker);
     });
+    this.infoWindows.push(infoWindow);
 
+  }
+
+  closeAllInfoWindows(){
+    for(const window of this.infoWindows){
+      window.close();
+    }
   }
 
   //FUNCTION SHOWING THE COORDINATES OF THE POINT AT THE CENTER OF THE MAP
@@ -199,12 +211,25 @@ export class Tab1Page implements OnInit{
     const latLng = new google.maps.LatLng(this.lat, this.long);
 
     this.getRestaurants(latLng).then((results: Array<any>)=>{
-      this.places = results;
+
+      //this.places = results;
+      if(this.places == null){
+        this.places = [];
+      }
+
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for(let i = 0 ;i < results.length ; i++)
       {
-          this.addMarker(results[i]);
+        //check if position is already marked
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        if(this.places.indexOf(results[i]) === -1){
+          this.places.push(results[i].name);
+          //this.addMarker(results[i]);
+        }else{ console.log('This item already exists'); }
+        this.addMarker(results[i]);
       }
+
+      //alert( JSON.stringify(this.places) );
 
     },(status)=>console.log(status));
   }
