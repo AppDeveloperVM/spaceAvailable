@@ -179,26 +179,33 @@ export class Tab1Page implements OnInit{
       position: place.geometry.location
     });
 
-    const latitude = place.geometry.location.lat();
-    const longitude = place.geometry.location.lng();
+    this.addInfoWindowToMarker(marker);
+  }
 
+  addInfoWindowToMarker(marker){
+
+    const latitude = marker.latitude;
+    const longitude = marker.longitude;
     const address = this.getAddressFromCoords(latitude , longitude);
-    const infoWindowContent = '<div id="content>' +
-                                '<h2 id="heading">'+ address +
-                                '<p>Latitude: '+ place.latitude + '</p>' +
-                                '<p>Longitude: ' + place.longitude + '</p>';
+
+    //Custom infoContent
+    const infoWindowContent = '<div id="content">' +
+                                '<h2 id="heading">'+ address + '</h2>' +
+                                '<p>Latitude: '+ marker.latitude + '</p>' +
+                                '<p>Longitude: ' + marker.longitude + '</p>' +
+                              '</div>';
+
     const infoWindow = new google.maps.InfoWindow({
-      infoWindowContent
+      content: address
     });
 
-    //infoContent for every marker
     google.maps.event.addListener(marker, 'click', () => {
       this.closeAllInfoWindows();
       infoWindow.open(this.map, marker);
     });
-
     this.infoWindows.push(infoWindow);
     this.markers.push(marker);
+
   }
 
   setMapOnAll(map) {
